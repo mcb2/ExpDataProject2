@@ -20,15 +20,14 @@ NEI <- readRDS("./data/summarySCC_PM25.rds")
 SCC <- readRDS("./data/Source_Classification_Code.rds")
 NEI$year <- as.factor(NEI$year)
 
-png(filename = "plot4.png")
-sources <- filter(SCC, grepl("coal", Short.Name, ignore.case = TRUE), 
-                  grepl("combustion", SCC.Level.One, ignore.case = TRUE)) %>%
+png(filename = "plot5.png")
+# all motor vehicle polution short names include the string "vehicle" in SCC.Level.Two
+sources <- filter(SCC, grepl("vehicle", SCC.Level.Two, ignore.case = TRUE)) %>%
      select(SCC)
-coalcombustdata <- filter(NEI, SCC %in% sources$SCC) %>%
+vehicledata <- filter(NEI, SCC %in% sources$SCC, fips == "24510") %>%
      group_by(year) %>%
-     summarise(coal_combustion_emissions = sum(Emissions, na.rm = TRUE))
-qplot(year, coal_combustion_emissions, data = coalcombustdata, 
+     summarise(total_vehicle_emissions = sum(Emissions, na.rm = TRUE))
+qplot(year, total_vehicle_emissions, data = vehicledata, 
       geom = "line", method = "lm", 
-      group = 1, main = "Coal Combustion Emissions")
+      group = 1, main = "Baltimore City Motor Vehicle Emissions")
 dev.off()
-
