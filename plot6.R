@@ -20,12 +20,15 @@ NEI <- readRDS("./data/summarySCC_PM25.rds")
 SCC <- readRDS("./data/Source_Classification_Code.rds")
 NEI$year <- as.factor(NEI$year)
 
-png(filename = "plot3.png", width = 640, height = 480)
-balt <- filter(NEI, fips == "24510") %>%
-     group_by(type, year) %>%
-     summarise(total_emissions = sum(Emissions, na.rm = TRUE)) 
-qplot(year, total_emissions, data = balt, facets = .~ type, 
-      geom = c("point", "smooth"), method = "lm", 
-      group = 1)
+png(filename = "plot6.png")
+# all motor vehicle polution short names include the string "vehicle" in SCC.Level.Two
+sources <- filter(SCC, grepl("vehicle", SCC.Level.Two, ignore.case = TRUE)) %>%
+     select(SCC)
+vehicledata <- filter(NEI, SCC %in% sources$SCC, fips == "24510" | fips == "06037") %>%
+     mutate(county = ifelse(fips == "24510", "Baltimore City", "Los Angeles County")) %>%
+     group_by(county, year) %>%
+     summarise(total_vehicle_emissions = sum(Emissions, na.rm = TRUE))
+qplot(year, total_vehicle_emissions, data = vehicledata, color = county,
+      geom = c("point", "smooth"), method = "lm",
+      group = county, main = "Baltimore vs. LA Motor Vehicle Emissions")
 dev.off()
-
