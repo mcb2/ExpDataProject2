@@ -30,5 +30,6 @@ vehicledata <- filter(NEI, SCC %in% sources$SCC, fips == "24510" | fips == "0603
      summarise(total_vehicle_emissions = sum(Emissions, na.rm = TRUE))
 qplot(year, total_vehicle_emissions, data = vehicledata, color = county,
       geom = c("point", "smooth"), method = "lm",
-      group = county, main = "Baltimore vs. LA Motor Vehicle Emissions")
+      group = county, main = "Baltimore vs. LA Motor Vehicle Emissions",
+      ylab = "Total Emissions (Tons)")
 dev.off()

@@ -24,8 +24,10 @@ png(filename = "plot3.png", width = 640, height = 480)
 balt <- filter(NEI, fips == "24510") %>%
      group_by(type, year) %>%
      summarise(total_emissions = sum(Emissions, na.rm = TRUE)) 
+# plot total emissions by type with linear model to show trend
 qplot(year, total_emissions, data = balt, facets = .~ type, 
       geom = c("point", "smooth"), method = "lm", 
-      group = 1)
+      group = 1, main = "Baltimore City Emission Trends by Type", 
+      ylab = "Total Emissions (Tons)")
 dev.off()
 

@@ -27,7 +27,9 @@ sources <- filter(SCC, grepl("vehicle", SCC.Level.Two, ignore.case = TRUE)) %>%
 vehicledata <- filter(NEI, SCC %in% sources$SCC, fips == "24510") %>%
      group_by(year) %>%
      summarise(total_vehicle_emissions = sum(Emissions, na.rm = TRUE))
+# connecting data point with a line to better visualize the trend
 qplot(year, total_vehicle_emissions, data = vehicledata, 
       geom = "line", method = "lm", 
-      group = 1, main = "Baltimore City Motor Vehicle Emissions")
+      group = 1, main = "Baltimore City Motor Vehicle Emissions",
+      ylab = "Total Emissions (Tons)")
 dev.off()

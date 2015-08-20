@@ -21,14 +21,18 @@ SCC <- readRDS("./data/Source_Classification_Code.rds")
 NEI$year <- as.factor(NEI$year)
 
 png(filename = "plot4.png")
+#coal combustion related sources include "coal" in Short.Name and "combustion" in SCC.Level.One
 sources <- filter(SCC, grepl("coal", Short.Name, ignore.case = TRUE), 
                   grepl("combustion", SCC.Level.One, ignore.case = TRUE)) %>%
      select(SCC)
+# going to use total coal combustion emissions (i.e. sum) for each year 
 coalcombustdata <- filter(NEI, SCC %in% sources$SCC) %>%
      group_by(year) %>%
      summarise(coal_combustion_emissions = sum(Emissions, na.rm = TRUE))
+# connecting data point with a line to better visualize the trend
 qplot(year, coal_combustion_emissions, data = coalcombustdata, 
       geom = "line", method = "lm", 
-      group = 1, main = "Coal Combustion Emissions")
+      group = 1, main = "Coal Combustion Emissions",
+      ylab = "Coal Combustion Emissions (Tons)")
 dev.off()
 
